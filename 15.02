@@ -1,0 +1,59 @@
+#include <iostream>
+#include <windows.h>
+using namespace std;
+
+//void goToX(int x, int y) {
+//	COORD pos = { x,y };
+//	HANDLE output = 
+//}
+
+const int LENGHT = 36;
+const int WIDGHT = 18;
+const int MAXLENGHTSNAKE = (WIDGHT - 3) * (LENGHT - 2); //максимальная длина змейки
+const int UP = 0;
+const int DOWN = 1;
+const int RIGHT = 2;
+const int LEFT = 3;
+
+int snakedir = UP;   //изначальная позиция змейки
+bool exitGame = true;         //выход из игры, если false
+const char snake = 'O';
+
+char snakemap[] =
+"####################################\n"//36x18
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"#                                  #\n"
+"####################################\n";
+
+int snake_x[MAXLENGHTSNAKE] = {0};
+int snake_y[MAXLENGHTSNAKE] = {0};
+int snake_len = 1;
+
+int main()
+{
+	setlocale(LC_ALL, "rus");
+	snake_x[0] = WIDGHT / 2;
+	snake_y[0] = LENGHT / 2;
+	while (exitGame) {
+		for (int i = 0; i < snake_len; ++i) {
+			snakemap[snake_y[i] * WIDGHT + snake_x[i]]=snake;
+		}
+		cout << snakemap;
+		system("cls");
+	}
+
+}
