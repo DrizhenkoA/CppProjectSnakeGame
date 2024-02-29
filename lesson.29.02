@@ -1,0 +1,108 @@
+#include <iostream>
+#include <string>
+#include <ctime>
+using namespace std;
+
+struct Product {
+    string name;            //название
+    int* date;             //срок  годности ( в днях )
+    int volume;             //объем продукта
+};
+struct Fridge {
+    string name = "VOLGA";          //марка
+    int volume;                 //объем на сколько заполнен(текущий)
+    int volumeCapacity;              //объем (максимальный)
+    int size = 0;                    //текущее кол-во еды в холодильнике
+    Product** products = new Product * [0];         //массив продуктов в холодильнике    
+};
+
+int* dateParse(string date) {
+    int* dateArr = new int[3];
+    string str = " ";
+    for (int i = 0, j = 0; i < date.length(); i++)
+    {
+        if (date[i] == '.') {
+            dateArr[j++] = stoi(str);
+            str = " ";
+        }
+        else if (i == date.length() - 1) {
+            str += date[i];
+            dateArr[j++] = stoi(str);
+            str = " ";
+        }
+        else {
+            str += date[i];
+        }
+    }
+    if (dateArr[0] > 31 || dateArr[1] > 12 || dateArr[2] > 9999) return nullptr;
+    return dateArr;
+}
+
+void productInfo(Product product) {
+    cout << "Name: " << product.name << endl;
+    cout << "Volume: " << product.volume << endl;
+    cout << "Date: " << product.date[0] << "." << product.date[1] << "." << product.date[2] << endl;
+    cout << "--------------------" << endl;
+}
+
+Product* createProduct(string name, int volume, string date) {
+    int* arrDate = dateParse(date);
+    if (arrDate == nullptr) return nullptr;
+    Product* product = new Product;
+    product->name = name;
+    product->volume = volume;
+    product->date = arrDate;
+    return product;
+    
+}
+
+Fridge* createFridge(int volumeCapacity, string name = "VOLGA") {
+    Fridge* fridge = new Fridge();
+    fridge->name = name;
+    fridge->volumeCapacity = volumeCapacity;
+    return fridge; 
+}
+
+void addProducts(Fridge& fridge, Product product) {
+    ;
+}
+
+void showFridgeInfo(Fridge frid) {
+    if (frid.size == 0) {
+        cout << "FRIDGE IS EMPTY " << endl;
+        return;
+    }
+
+}
+
+void deleteProducts(Fridge& frid, string name) {
+    int index = -1;
+}
+
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    Product* pr1 = createProduct("Noski", 200, "22.02.2004");
+    Product* pr2 = createProduct("Bread", 600, "28.10.2015");
+    Product* pr3 = createProduct("Melon", 3000, "28.12.2011");
+
+    Fridge fr1;
+    fr1.name = "VOLGA";
+    fr1.volume = 200000;
+
+    //int* a = dateParse("12.04.2022");
+    //if (a[0] == -1){
+    //    cout << "incorrect date";
+    //}
+    //else {
+    //for (int i = 0; i < 3; i++)
+    //{
+    //    cout << a[i] << " ";
+    //}
+    //}
+    productInfo(*pr1);
+    productInfo(*pr2);
+    productInfo(*pr3);
+
+}
