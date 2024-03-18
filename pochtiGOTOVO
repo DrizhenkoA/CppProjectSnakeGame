@@ -1,5 +1,6 @@
 #include <iostream>
 #include <windows.h>
+#define random(min,max) (min + rand() % (max - min + 1))
 
 using namespace std;
 
