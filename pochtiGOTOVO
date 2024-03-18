@@ -1,5 +1,6 @@
 #include <iostream>
 #include <windows.h>
+
 using namespace std;
 
 void goToXY(int x, int y) {            //убирает раскадровку, перемещает курсор вверх после каждой итерации
@@ -8,11 +9,11 @@ void goToXY(int x, int y) {            //убирает раскадровку, 
 	SetConsoleCursorPosition(output, pos);
 }
 
-const int WIDGHT = 18;
-const int LENGHT = 10;
+const int WIDGHT = 18;				           //ширина карты
+const int LENGHT = 10;						   //длина карты
 const int MAXLENGHTSNAKE = (WIDGHT - 3) * (LENGHT - 2); //максимальная длина змейки
 
-const int UP = 0;  //направление движения
+const int UP = 0;          //направление движения
 const int DOWN = 1;
 const int RIGHT = 2;
 const int LEFT = 3;
@@ -44,17 +45,17 @@ char food = '*';
 int main()
 {
 	setlocale(LC_ALL, "rus");
-	srand(time(0));
+	srand(time(NULL));
 	snake_x[0] = WIDGHT / 2;
 	snake_y[0] = LENGHT / 2;
 	double time = clock();
 
-	//cout << "\t\t\t\t\t\tSNAKE BY SOOQA" << endl;
-	//Sleep(3000);
+	//cout << "\t\t\t\t\t\tSNAKE BY suka" << endl;           //интруха
+	//Sleep(1500);
 	//cout << endl << "\t\t\t\t\t\t  BE CAREFUL" << endl;
-	//Sleep(3000);
+	//Sleep(1500);
 	//cout << endl << "\t\t\t\t\t\t  GOOD LUCK!" << endl;
-	//Sleep(3000);
+	//Sleep(1000);
 	//system("cls");
 
 	while (exitGame) {
@@ -93,7 +94,7 @@ int main()
 				snake_y[i + 1] = snake_y[i];
 			}
 
-			if (snakepos == UP)
+			if (snakepos == UP)               //смещение самой змейки 
 				--snake_y[0];
 
 			if (snakepos == DOWN)
@@ -105,8 +106,8 @@ int main()
 			if (snakepos == LEFT)
 				--snake_x[0];
 
-			if ((snake_x[0] == 0) || (snake_y == 0) || (snake_x[0] == WIDGHT - 2) || (snake_y[0] == LENGHT - 1)) exitGame = false;
-			//гейм овер если змейка коснется решетки
+			if ((snake_x[0] == 0) || (snake_y == 0) || (snake_x[0] == WIDGHT - 2) || (snake_y[0] == LENGHT - 1)) exitGame = false; //гейм овер если змейка коснется решетки
+
 
 			for (int i = 1; i < snake_len; i++) {                             //гейм овер если змейка коснется сама себя
 				if (snake_x[0] == snake_x[i] && snake_y[0] == snake_y[i]) {
@@ -115,7 +116,7 @@ int main()
 				}
 			}
 			goToXY(0, 0);
-			cout << "LENGHT NOW: " << snake_len << endl;
+			cout << "LENGHT NOW: " << snake_len << endl;            //вывод инфы о текущей длине змейки
 
 			snakemap[food_y * WIDGHT + food_x] = food; // генерация еды
 
