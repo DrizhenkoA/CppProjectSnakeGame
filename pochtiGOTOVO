@@ -36,7 +36,7 @@ char snakemap[] =
 
 int snake_x[MAXLENGHTSNAKE] = { 0 };         //массив координат змеи
 int snake_y[MAXLENGHTSNAKE] = { 0 };
-int snake_len = 1;                  //текущий размер змейки
+int snake_len = 10;                  //текущий размер змейки
 
 int food_x = 1 + (rand() % (WIDGHT - 3));
 int food_y = 1 + (rand() % (LENGHT - 2));
@@ -80,10 +80,32 @@ int main()
 			}
 		}
 
+		if (GetKeyState(38) & 0x8000) {
+			if (snakepos != DOWN) {
+				snakepos = UP;
+			}
+		}
+		if (GetKeyState(37) & 0x8000) {
+			if (snakepos != RIGHT) {
+				snakepos = LEFT;
+			}
+		}
+		if (GetKeyState(40) & 0x8000) {
+			if (snakepos != UP) {
+				snakepos = DOWN;
+			}
+		}
+		if (GetKeyState(39) & 0x8000) {
+			if (snakepos != LEFT) {
+				snakepos = RIGHT;
+			}
+		}
+
 		if ((clock() - time) / CLOCKS_PER_SEC >= 0.5) { //проверка на состояние запуска (разрешаем заходить в цикл только 1 раз в секунду)
 			time = clock();
 
-			if (snake_x[0] == food_x && snake_y[0] == food_y) {
+
+			if (snake_x[0] == food_x && snake_y[0] == food_y) {        //увеличивает длину змейки при поедании фуда
 				++snake_len;
 				int food_x = 1 + (rand() % (WIDGHT - 3));
 				int food_y = 1 + (rand() % (LENGHT - 2));
@@ -120,7 +142,7 @@ int main()
 
 			snakemap[food_y * WIDGHT + food_x] = food; // генерация еды
 
-			for (int i = 0; i < snake_len; ++i) {
+			for (int i = 0; i < snake_len; ++i) {                    //генерация изначальной позиции змейки на карте (самый старт)
 				snakemap[snake_y[i] * WIDGHT + snake_x[i]] = snake;
 			}
 
@@ -132,7 +154,12 @@ int main()
 		}
 	}
 	goToXY(1, LENGHT / 2);
-	cout << "YOUR SCORE = " << snake_len;
+	if (snake_len <= 9) {
+		cout << "YOUR SCORE = " << snake_len << " #";
+	}
+	else if (snake_len >= 10) {
+		cout << "YOUR SCORE = " << snake_len << "#";
+	}
 	goToXY(WIDGHT, LENGHT);
 
 
