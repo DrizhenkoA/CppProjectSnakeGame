@@ -1,30 +1,42 @@
 #include <iostream>
 #include <windows.h>
+#include <ctime>
 #define random(min,max) (min + rand() % (max - min + 1))
 
 using namespace std;
 
-void goToXY(int x, int y) {            //убирает раскадровку, перемещает курсор вверх после каждой итерации
-	COORD pos = { x, y };
-	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleCursorPosition(output, pos);
+void goToXY(int x, int y) {                //убирает раскадровку, перемещает курсор вверх после каждой итерации
+    COORD pos = { x, y };
+    HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(output, pos);
 }
 
-const int WIDGHT = 18;				           //ширина карты
-const int LENGHT = 10;						   //длина карты
-const int MAXLENGHTSNAKE = (WIDGHT - 3) * (LENGHT - 2); //максимальная длина змейки
+void intro() {
+    cout << "\t\t\t\t\t\tSNAKE BY SOOQA" << endl;           //интруха
+    Sleep(1500);
+    cout << endl << "\t\t\t\t\t\t  BE CAREFUL" << endl;
+    Sleep(1500);
+    cout << endl << "\t\t\t\t\t\t  GOOD LUCK!" << endl;
+    Sleep(1000);
+    system("cls");
+}
 
-const int UP = 0;          //направление движения
+
+const int WIDTH = 18;				           //ширина карты (X)
+const int LENGTH = 10;				           //длина карты (Y)
+const int MAX_LENGTH_SNAKE = (WIDTH - 3) * (LENGTH - 2);      //максимальная длина змейки
+
+const int UP = 0;        //направление движения
 const int DOWN = 1;
 const int RIGHT = 2;
 const int LEFT = 3;
 
-int snakepos = UP;   //изначальная позиция змейки (двигается вверх)
-bool exitGame = true;         //выход из игры, если false
-const char snake = 'O';            //символ змеи
+int snakepos = UP;        //изначальная позиция змейки 
+bool exitGame = true;         //выход из игры
+const char snake = 'O';         //символ змеи
 
-char snakemap[] =
-"#################\n"//17x10
+char snake_map[] =
+"#################\n"
 "#               #\n"
 "#               #\n"
 "#               #\n"
@@ -35,133 +47,145 @@ char snakemap[] =
 "#               #\n"
 "#################\n";
 
-int snake_x[MAXLENGHTSNAKE] = { 0 };         //массив координат змеи
-int snake_y[MAXLENGHTSNAKE] = { 0 };
-int snake_len = 10;                  //текущий размер змейки
+int snake_x[MAX_LENGTH_SNAKE] = { 0 };      //массив координат змеи
+int snake_y[MAX_LENGTH_SNAKE] = { 0 };
+int snake_len = 1;          //текущий размер змейки
 
-int food_x = 1 + (rand() % (WIDGHT - 3));
-int food_y = 1 + (rand() % (LENGHT - 2));
+int food_x = 1 + (rand() % (WIDTH - 3));
+int food_y = 1 + (rand() % (LENGTH - 2));
 char food = '*';
 
-int main()
-{
-	setlocale(LC_ALL, "rus");
-	srand(time(NULL));
-	snake_x[0] = WIDGHT / 2;
-	snake_y[0] = LENGHT / 2;
-	double time = clock();
+void generateFood() {
+    food_x = 1 + (rand() % (WIDTH - 3));
+    food_y = 1 + (rand() % (LENGTH - 2));
+}
 
-	//cout << "\t\t\t\t\t\tSNAKE BY suka" << endl;           //интруха
-	//Sleep(1500);
-	//cout << endl << "\t\t\t\t\t\t  BE CAREFUL" << endl;
-	//Sleep(1500);
-	//cout << endl << "\t\t\t\t\t\t  GOOD LUCK!" << endl;
-	//Sleep(1000);
-	//system("cls");
+void snakeMove() {
+    if (GetKeyState('W') & 0x8000) {
+        if (snakepos != DOWN) {
+            snakepos = UP;
+        }
+    }
+    if (GetKeyState('A') & 0x8000) {
+        if (snakepos != RIGHT) {
+            snakepos = LEFT;
+        }
+    }
+    if (GetKeyState('S') & 0x8000) {
+        if (snakepos != UP) {
+            snakepos = DOWN;
+        }
+    }
+    if (GetKeyState('D') & 0x8000) {
+        if (snakepos != LEFT) {
+            snakepos = RIGHT;
+        }
+    }
 
-	while (exitGame) {
-		if (GetKeyState('W') & 0x8000) {          //считывание клавиш + проверка не противоречит ли одна клавиша другой (например W-S)
-			if (snakepos != DOWN) {
-				snakepos = UP;
-			}
-		}
-		if (GetKeyState('A') & 0x8000) {
-			if (snakepos != RIGHT) {
-				snakepos = LEFT;
-			}
-		}
-		if (GetKeyState('S') & 0x8000) {
-			if (snakepos != UP) {
-				snakepos = DOWN;
-			}
-		}
-		if (GetKeyState('D') & 0x8000) {
-			if (snakepos != LEFT) {
-				snakepos = RIGHT;
-			}
-		}
+    if (GetKeyState(38) & 0x8000) {
+        if (snakepos != DOWN) {
+            snakepos = UP;
+        }
+    }
+    if (GetKeyState(37) & 0x8000) {
+        if (snakepos != RIGHT) {
+            snakepos = LEFT;
+        }
+    }
+    if (GetKeyState(40) & 0x8000) {
+        if (snakepos != UP) {
+            snakepos = DOWN;
+        }
+    }
+    if (GetKeyState(39) & 0x8000) {
+        if (snakepos != LEFT) {
+            snakepos = RIGHT;
+        }
+    }
+}
 
-		if (GetKeyState(38) & 0x8000) {
-			if (snakepos != DOWN) {
-				snakepos = UP;
-			}
-		}
-		if (GetKeyState(37) & 0x8000) {
-			if (snakepos != RIGHT) {
-				snakepos = LEFT;
-			}
-		}
-		if (GetKeyState(40) & 0x8000) {
-			if (snakepos != UP) {
-				snakepos = DOWN;
-			}
-		}
-		if (GetKeyState(39) & 0x8000) {
-			if (snakepos != LEFT) {
-				snakepos = RIGHT;
-			}
-		}
+void moveOnMap() {
+    if (snakepos == UP)               //смещение самой змейки 
+        --snake_y[0];
 
-		if ((clock() - time) / CLOCKS_PER_SEC >= 0.5) { //проверка на состояние запуска (разрешаем заходить в цикл только 1 раз в секунду)
-			time = clock();
+    if (snakepos == DOWN)
+        ++snake_y[0];
+
+    if (snakepos == RIGHT)
+        ++snake_x[0];
+
+    if (snakepos == LEFT)
+        --snake_x[0];
+}
+
+int main() {
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    snake_x[0] = WIDTH / 2;
+    snake_y[0] = LENGTH / 2;
+    double time = clock();
+
+    intro();
+
+    while (exitGame) {
+        goToXY(0, 0);
+
+        snakeMove();           //считывание клавиш + проверка не противоречит ли одна клавиша другой (например W-S)
+
+        if ((clock() - time) / CLOCKS_PER_SEC >= 0.5) { //проверка на состояние запуска (разрешаем заходить в цикл только 1 раз в секунду)
+            time = clock();
+
+            if (snake_x[0] == food_x && snake_y[0] == food_y) {   // генерация новой еды после поедания, увеличивает змейку при поедании фуда
+                ++snake_len;
+                generateFood();
+            }
+
+            for (int i = snake_len - 2; i >= 0; --i) {      //смещение новых частей тела змейки
+                snake_x[i + 1] = snake_x[i];
+                snake_y[i + 1] = snake_y[i];
+            }
+
+            moveOnMap(); //смещение самой змейки ( по X и Y )
+
+            if ((snake_x[0] == 0) || (snake_y[0] == 0) || (snake_x[0] == WIDTH - 2) || (snake_y[0] == LENGTH - 1))
+                exitGame = false;
+
+            for (int i = 1; i < snake_len; i++) {       //гейм овер если змейка коснется сама себя
+                if (snake_x[0] == snake_x[i] && snake_y[0] == snake_y[i]) {
+                    exitGame = false;
+                    break;
+                }
+            }
 
 
-			if (snake_x[0] == food_x && snake_y[0] == food_y) {        //увеличивает длину змейки при поедании фуда
-				++snake_len;
-				int food_x = 1 + (rand() % (WIDGHT - 3));
-				int food_y = 1 + (rand() % (LENGHT - 2));
-			}
+            cout << "LENGHT NOW: " << snake_len << endl;         //вывод инфы о текущей длине змейки
 
-			for (int i = snake_len - 2; i >= 0; --i) {  //отработа движения змеи ( смещение позиций предпоследней части тела )
-				snake_x[i + 1] = snake_x[i];
-				snake_y[i + 1] = snake_y[i];
-			}
+            snake_map[food_y * WIDTH + food_x] = food;
 
-			if (snakepos == UP)               //смещение самой змейки 
-				--snake_y[0];
+            for (int i = 0; i < snake_len; ++i) {           //генерация изначальной позиции змейки на карте (самый старт)
+                snake_map[snake_y[i] * WIDTH + snake_x[i]] = snake;
+            }
 
-			if (snakepos == DOWN)
-				++snake_y[0];
+            cout << snake_map;
 
-			if (snakepos == RIGHT)
-				++snake_x[0];
+            for (int i = 0; i < snake_len; ++i) {                          //убирает предыдущее положение змейки
+                snake_map[snake_y[i] * WIDTH + snake_x[i]] = ' ';
+            }
+        }
+    }
 
-			if (snakepos == LEFT)
-				--snake_x[0];
+    goToXY(1, LENGTH / 2);
 
-			if ((snake_x[0] == 0) || (snake_y == 0) || (snake_x[0] == WIDGHT - 2) || (snake_y[0] == LENGHT - 1)) exitGame = false; //гейм овер если змейка коснется решетки
+    if (snake_len <= 9) {
+        cout << "YOUR SCORE = " << snake_len << " #";
+    }
+    else if (snake_len >= 10) {
+        cout << "YOUR SCORE = " << snake_len << "#";
+    }
+    else if (snake_len >= 100) {
+        cout << "YOUR SCORE=" << snake_len << "#";
+    }
 
-
-			for (int i = 1; i < snake_len; i++) {                             //гейм овер если змейка коснется сама себя
-				if (snake_x[0] == snake_x[i] && snake_y[0] == snake_y[i]) {
-					exitGame = false;
-					i = snake_len;
-				}
-			}
-			goToXY(0, 0);
-			cout << "LENGHT NOW: " << snake_len << endl;            //вывод инфы о текущей длине змейки
-
-			snakemap[food_y * WIDGHT + food_x] = food; // генерация еды
-
-			for (int i = 0; i < snake_len; ++i) {                    //генерация изначальной позиции змейки на карте (самый старт)
-				snakemap[snake_y[i] * WIDGHT + snake_x[i]] = snake;
-			}
-
-			cout << snakemap;
-
-			for (int i = 0; i < snake_len; ++i) {                   //убирает предыдущее положение змейки
-				snakemap[snake_y[i] * WIDGHT + snake_x[i]] = ' ';
-			}
-		}
-	}
-	goToXY(1, LENGHT / 2);
-	if (snake_len <= 9) {
-		cout << "YOUR SCORE = " << snake_len << " #";
-	}
-	else if (snake_len >= 10) {
-		cout << "YOUR SCORE = " << snake_len << "#";
-	}
-	goToXY(WIDGHT, LENGHT);
-
+    goToXY(WIDTH, LENGTH);
 
 }
