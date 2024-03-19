@@ -1,0 +1,182 @@
+#include <iostream>
+#include <windows.h>
+#include <ctime>
+#define random(min,max) (min + rand() % (max - min + 1))
+
+using namespace std;
+
+void goToXY(int x, int y) {
+    COORD pos = { x, y };
+    HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleCursorPosition(output, pos);
+}
+
+void intro() {
+    cout << "\t\t\t\t\t\tSNAKE BY SOOQA" << endl;           //интруха
+    Sleep(1500);
+    cout << endl << "\t\t\t\t\t\t  BE CAREFUL" << endl;
+    Sleep(1500);
+    cout << endl << "\t\t\t\t\t\t  GOOD LUCK!" << endl;
+    Sleep(1000);
+    system("cls");
+}
+
+const int WIDTH = 18;
+const int LENGTH = 10;
+const int MAX_LENGTH_SNAKE = (WIDTH - 3) * (LENGTH - 2);
+
+const int UP = 0;
+const int DOWN = 1;
+const int RIGHT = 2;
+const int LEFT = 3;
+
+int snakepos = UP;
+bool exitGame = true;
+const char snake = 'O';
+
+char snake_map[] =
+"#################\n"
+"#               #\n"
+"#               #\n"
+"#               #\n"
+"#               #\n"
+"#               #\n"
+"#               #\n"
+"#               #\n"
+"#               #\n"
+"#################\n";
+
+int snake_x[MAX_LENGTH_SNAKE] = { 0 };
+int snake_y[MAX_LENGTH_SNAKE] = { 0 };
+int snake_len = 1;
+
+int food_x = 1 + (rand() % (WIDTH - 3));
+int food_y = 1 + (rand() % (LENGTH - 2));
+char food = '*';
+
+void generateFood() {
+    food_x = 1 + (rand() % (WIDTH - 3));
+    food_y = 1 + (rand() % (LENGTH - 2));
+}
+
+int main() {
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    snake_x[0] = WIDTH / 2;
+    snake_y[0] = LENGTH / 2;
+    double time = clock();
+
+    intro();
+
+    while (exitGame) {
+
+        if (GetKeyState('W') & 0x8000) {          //считывание клавиш + проверка не противоречит ли одна клавиша другой (например W-S)
+            if (snakepos != DOWN) {
+                snakepos = UP;
+            }
+        }
+        if (GetKeyState('A') & 0x8000) {
+            if (snakepos != RIGHT) {
+                snakepos = LEFT;
+            }
+        }
+        if (GetKeyState('S') & 0x8000) {
+            if (snakepos != UP) {
+                snakepos = DOWN;
+            }
+        }
+        if (GetKeyState('D') & 0x8000) {
+            if (snakepos != LEFT) {
+                snakepos = RIGHT;
+            }
+        }
+
+        if (GetKeyState(38) & 0x8000) {
+            if (snakepos != DOWN) {
+                snakepos = UP;
+            }
+        }
+        if (GetKeyState(37) & 0x8000) {
+            if (snakepos != RIGHT) {
+                snakepos = LEFT;
+            }
+        }
+        if (GetKeyState(40) & 0x8000) {
+            if (snakepos != UP) {
+                snakepos = DOWN;
+            }
+        }
+        if (GetKeyState(39) & 0x8000) {
+            if (snakepos != LEFT) {
+                snakepos = RIGHT;
+            }
+        }
+
+        if ((clock() - time) / CLOCKS_PER_SEC >= 0.5) {
+            time = clock();
+
+            if (snake_x[0] == food_x && snake_y[0] == food_y) {   // генерация новой еды после поедания
+                ++snake_len;
+                generateFood();
+            }
+
+            for (int i = snake_len - 2; i >= 0; --i) {
+                snake_x[i + 1] = snake_x[i];
+                snake_y[i + 1] = snake_y[i];
+            }
+
+            if (snakepos == UP)               //смещение самой змейки 
+                --snake_y[0];
+
+            if (snakepos == DOWN)
+                ++snake_y[0];
+
+            if (snakepos == RIGHT)
+                ++snake_x[0];
+
+            if (snakepos == LEFT)
+                --snake_x[0];
+
+
+            if ((snake_x[0] == 0) || (snake_y[0] == 0) || (snake_x[0] == WIDTH - 2) || (snake_y[0] == LENGTH - 1))
+                exitGame = false;
+
+            for (int i = 1; i < snake_len; i++) {
+                if (snake_x[0] == snake_x[i] && snake_y[0] == snake_y[i]) {
+                    exitGame = false;
+                    break;
+                }
+            }
+
+            goToXY(0, 0);
+
+            cout << "LENGHT NOW: " << snake_len << endl;
+
+            snake_map[food_y * WIDTH + food_x] = food;
+
+            for (int i = 0; i < snake_len; ++i) {
+                snake_map[snake_y[i] * WIDTH + snake_x[i]] = snake;
+            }
+
+            cout << snake_map;
+
+            for (int i = 0; i < snake_len; ++i) {
+                snake_map[snake_y[i] * WIDTH + snake_x[i]] = ' ';
+            }
+        }
+    }
+
+    goToXY(1, LENGTH / 2);
+
+    if (snake_len <= 9) {
+        cout << "YOUR SCORE = " << snake_len << " #";
+    }
+    else if (snake_len >= 10) {
+        cout << "YOUR SCORE = " << snake_len << "#";
+    }
+    else if (snake_len >= 100) {
+        cout << "YOUR SCORE=" << snake_len << "#";
+    }
+    goToXY(WIDTH, LENGTH);
+
+}
